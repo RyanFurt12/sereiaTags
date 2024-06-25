@@ -2361,31 +2361,87 @@
   <!-- Exercise Answers -->
   <script>
     //01 - Console log ao final da página
-    window.addEventListener('scroll', () => 
-    {
-      let documentHeight = document.body.offsetHeight;
-      let scrollPosBottom = window.innerHeight + window.scrollY;
+      window.addEventListener('scroll', () => 
+      {
+        let documentHeight = document.body.offsetHeight;
+        let scrollPosBottom = window.innerHeight + window.scrollY;
 
-      if(scrollPosBottom == documentHeight) console.log('Rolou até o final');
-    });
+        if(scrollPosBottom == documentHeight) console.log('Rolou até o final');
+      });
 
     //2. Executar console.log('Clicou em FAÇA UM ORÇAMENTO') se o usuário clicou no botão FAÇA UM ORÇAMENTO.
-    document.querySelector('header .container a').addEventListener('click', e => 
-    {
-      console.log(`Clicou em ${e.target.innerText}`);
-    });
+      document.querySelector('header .container a').addEventListener('click', e => 
+      {
+        console.log(`Clicou em ${e.target.innerText}`);
+      });
 
     //3. Executar console.log('Visualizou FALE COM UM ATENDENTE') quando o pop-up "Fale com um atendente" com o telefone ficar visível.
-    const observerTel = new IntersectionObserver( entries => 
-    {
-      entries.forEach(entry => 
-      { 
-        if(entry.isIntersecting) console.log('Visualizou FALE COM UM ATENDENTE') ;   
-      })
-    },
-    { threshold: .8 }
-    );
-    observerTel.observe(document.querySelector('#call-me-baby'));
+      const observerTel = new IntersectionObserver( entries => 
+      {
+        entries.forEach(entry => 
+        { 
+          if(entry.isIntersecting) console.log('Visualizou FALE COM UM ATENDENTE') ;   
+        })
+      },
+      { threshold: .8 }
+      );
+      observerTel.observe(document.querySelector('#call-me-baby'));
+
+    //4. Executar console.log('Preencheu campo <NOME DO CAMPO>') quando o usuário preencher cada campo do formulário. Por exemplo, se preencher o campo de email, executar console.log('Preencheu campo email'). Nesse caso específico do email, só executar o comando se o email for considerado válido pela validação automática do campo/página.
+    //5. Executar console.log('Preencheu todo o formulário') quando o usuário terminou de preencher todo o formulário.
+    //Note: Fiz duas opções para estudo, utilizando MutarionObserver, e EventListener, para testar basta mudar a variavel abaixo
+    let MutationOrEvent = "Event"
+    if(MutationOrEvent.toLowerCase() == "mutation"){
+
+      //Usando Mutation
+      const contactFormGroup = document.querySelectorAll('.form-group');
+      let filledFields = 0;
+
+      contactFormGroup.forEach(f => 
+      {
+        const observer = new MutationObserver( mutations => 
+        {
+          if(!f.querySelector("*:focus") & mutations.length > 0)
+          {
+            let fieldName = f.querySelector('*:first-child')
+                .placeholder.toLowerCase()
+                .replace(/^.+u\s|\s\*/g,'');
+            console.log(`Preencheu campo ${fieldName}`);
+
+            if(++filledFields >= contactFormGroup.length) console.log('Preencheu todo o formulário');
+
+            observer.disconnect();
+          };
+        });
+        observer.observe( f, 
+        { 
+          attributes:true,
+          attributeFilter: ["class"]
+        } );
+      });
+
+    }else{
+
+      //Usando Change Event
+      function verifyForm(e){
+        let input = e.target;
+        if(input.value != "" & input.getAttribute('aria-invalid') == 'false')
+        {
+          let fieldName = input.placeholder
+                  .toLowerCase()
+                  .replace(/^.+u\s|\s\*/g,'');
+          console.log(`Preencheu campo ${fieldName}`);
+
+          if(++filledFields >= contactFormGroup.length) console.log('Preencheu todo o formulário');
+
+          input.parentElement.removeEventListener('change', verifyForm);
+        };
+      };
+      const contactFormGroup = document.querySelectorAll('.form-group');
+      let filledFields = 0;
+      contactFormGroup.forEach( f => { f.addEventListener('change', verifyForm) });
+      
+    };
 
   </script>
 
