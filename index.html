@@ -2453,6 +2453,17 @@
           console.log(`Clicou no menu ${e.target.innerText}`);
         });
       });
+
+    // 7. Executar console.log('Visualizou o banheiro') sempre que a imagem banheiro.webp (seção "SOBRE") ficar visível no viewport.
+      const observerImage = new IntersectionObserver(entries => 
+      {
+        entries.forEach(entry => 
+        {
+          if(entry.isIntersecting) console.log('Visualizou o banheiro') ;   
+        })
+      }, { threshold: 1 });
+      observerImage.observe(document.querySelector("img[src='images/banheiro.webp']"));
+
   </script>
 
 </body>
