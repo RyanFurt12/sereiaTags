@@ -2374,7 +2374,19 @@
     {
       console.log(`Clicou em ${e.target.innerText}`);
     });
-    
+
+    //3. Executar console.log('Visualizou FALE COM UM ATENDENTE') quando o pop-up "Fale com um atendente" com o telefone ficar visível.
+    const observerTel = new IntersectionObserver( entries => 
+    {
+      entries.forEach(entry => 
+      { 
+        if(entry.isIntersecting) console.log('Visualizou FALE COM UM ATENDENTE') ;   
+      })
+    },
+    { threshold: .8 }
+    );
+    observerTel.observe(document.querySelector('#call-me-baby'));
+
   </script>
 
 </body>
