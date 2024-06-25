@@ -2357,6 +2357,19 @@
       });
     }, 5000);
   </script>
+
+  <!-- Exercise Answers -->
+  <script>
+    //01 - Console log ao final da página
+    window.addEventListener('scroll', () => 
+    {
+      let documentHeight = document.body.offsetHeight;
+      let scrollPosBottom = window.innerHeight + window.scrollY;
+
+      if(scrollPosBottom == documentHeight) console.log('Rolou até o final');
+    });
+
+  </script>
 </body>
 
 </html>
