@@ -2360,6 +2360,7 @@
 
   <!-- Exercise Answers -->
   <script>
+
     //01 - Console log ao final da página
       window.addEventListener('scroll', () => 
       {
@@ -2391,7 +2392,7 @@
     //5. Executar console.log('Preencheu todo o formulário') quando o usuário terminou de preencher todo o formulário.
     //Note: Fiz duas opções para estudo, utilizando MutarionObserver, e EventListener, para testar basta mudar a variavel abaixo
     let MutationOrEvent = "Event"
-    if(MutationOrEvent.toLowerCase() == "mutation"){
+    if( MutationOrEvent.toLowerCase() == "mutation" ){
 
       //Usando Mutation
       const contactFormGroup = document.querySelectorAll('.form-group');
@@ -2420,7 +2421,8 @@
         } );
       });
 
-    }else{
+    }
+    else{
 
       //Usando Change Event
       function verifyForm(e){
@@ -2440,9 +2442,17 @@
       const contactFormGroup = document.querySelectorAll('.form-group');
       let filledFields = 0;
       contactFormGroup.forEach( f => { f.addEventListener('change', verifyForm) });
-      
+
     };
 
+    // 6. Executar console.log('Clicou no menu <NOME DO MENU>') quando o usuário clicar em cada uma das opções do menu superior (SERVIÇOS, ..., CONTATO).
+      document.querySelectorAll(".nav .page-scroll").forEach(n => 
+      {
+        n.addEventListener('click', (e) => 
+        {
+          console.log(`Clicou no menu ${e.target.innerText}`);
+        });
+      });
   </script>
 
 </body>
