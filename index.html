@@ -2369,7 +2369,14 @@
       if(scrollPosBottom == documentHeight) console.log('Rolou até o final');
     });
 
+    //2. Executar console.log('Clicou em FAÇA UM ORÇAMENTO') se o usuário clicou no botão FAÇA UM ORÇAMENTO.
+    document.querySelector('header .container a').addEventListener('click', e => 
+    {
+      console.log(`Clicou em ${e.target.innerText}`);
+    });
+    
   </script>
-</body>
 
+</body>
+  
 </html>
