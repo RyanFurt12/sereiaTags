@@ -2402,17 +2402,15 @@
           };
         };
       };
-      document.querySelector('#contactForm').addEventListener('change', verifyForm);
+      document.querySelector('#contactForm')?.addEventListener('change', verifyForm);
 
 
     // 6. Executar console.log('Clicou no menu <NOME DO MENU>') quando o usuário clicar em cada uma das opções do menu superior (SERVIÇOS, ..., CONTATO).
-      document.querySelectorAll("nav#mainNav .nav .page-scroll").forEach(n => 
+      document.querySelector("nav#mainNav .navbar-right")?.addEventListener('click', (e) => 
       {
-        n.addEventListener('click', (e) => 
-        {
-          console.log(`Clicou no menu ${e.target.innerText}`);
-        });
+        if(e.target.tagName.toLowerCase() == 'a') console.log(`Clicou no menu ${e.target.innerText}`);
       });
+  
 
     // 7. Executar console.log('Visualizou o banheiro') sempre que a imagem banheiro.webp (seção "SOBRE") ficar visível no viewport.
       const observerImage = new IntersectionObserver(entries => 
