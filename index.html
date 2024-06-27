@@ -2379,10 +2379,7 @@
     //3. Executar console.log('Visualizou FALE COM UM ATENDENTE') quando o pop-up "Fale com um atendente" com o telefone ficar visível.
       const observerTel = new IntersectionObserver( entries => 
       {
-        entries.forEach(entry => 
-        { 
-          if(entry.isIntersecting) console.log('Visualizou FALE COM UM ATENDENTE') ;   
-        })
+        if(entries[0].isIntersecting) console.log('Visualizou FALE COM UM ATENDENTE');   
       },
       { threshold: .8 }
       );
@@ -2441,6 +2438,7 @@
           input.parentElement.removeEventListener('change', verifyForm);
         };
       };
+      
       const contactFormGroup = document.querySelectorAll('#contactForm .form-group');
       let filledFields = 0;
       contactFormGroup.forEach( f => { f.addEventListener('change', verifyForm) });
