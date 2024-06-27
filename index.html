@@ -2371,7 +2371,7 @@
       });
 
     //2. Executar console.log('Clicou em FAÇA UM ORÇAMENTO') se o usuário clicou no botão FAÇA UM ORÇAMENTO.
-      document.querySelector('header .intro-text a').addEventListener('click', e => 
+      document.querySelector('header .intro-text a')?.addEventListener('click', e => 
       {
         console.log(`Clicou em ${e.target.innerText}`);
       });
@@ -2387,63 +2387,23 @@
 
     //4. Executar console.log('Preencheu campo <NOME DO CAMPO>') quando o usuário preencher cada campo do formulário. Por exemplo, se preencher o campo de email, executar console.log('Preencheu campo email'). Nesse caso específico do email, só executar o comando se o email for considerado válido pela validação automática do campo/página.
     //5. Executar console.log('Preencheu todo o formulário') quando o usuário terminou de preencher todo o formulário.
-
-    //Note: Fiz duas opções para estudo, utilizando MutarionObserver, e EventListener, para testar basta mudar a variavel abaixo, eu prefiro a execução do 'change', mas deixei ambas pra ter um exemplo de mutation
-    let MutationOrEvent = "Event"
-
-    if( MutationOrEvent.toLowerCase() == "mutation" ){
-
-      //Usando Mutation
-      const contactFormGroup = document.querySelectorAll('#contactForm .form-group');
-      let filledFields = 0;
-
-      contactFormGroup.forEach(f => 
+      function verifyForm(e)
       {
-        const observer = new MutationObserver( mutations => 
+        if(e.target.value != "" & e.target.getAttribute('aria-invalid') == 'false')
         {
-          if(!f.querySelector("*:focus") & mutations.length > 0)
+          console.log(`Preencheu campo "${e.target.id}"`);
+
+          let inputsLength = this.querySelectorAll(".form-group input,textarea").length
+          this.filledFields = this.filledFields? ++this.filledFields : 1
+          if(this.filledFields >= inputsLength)
           {
-            let fieldName = f.querySelector('*:first-child')
-                .placeholder.toLowerCase()
-                .replace(/^.+u\s|\s\*/g,'');
-            console.log(`Preencheu campo ${fieldName}`);
-
-            if(++filledFields >= contactFormGroup.length) console.log('Preencheu todo o formulário');
-
-            observer.disconnect();
+            console.log('Preencheu todo o formulário');
+            this.removeEventListener('change', verifyForm);
           };
-        });
-        observer.observe( f, 
-        { 
-          attributes:true,
-          attributeFilter: ["class"]
-        });
-      });
-
-    }
-    else{
-
-      //Usando Change Event
-      function verifyForm(e){
-        let input = e.target;
-        if(input.value != "" & input.getAttribute('aria-invalid') == 'false')
-        {
-          let fieldName = input.placeholder
-                  .toLowerCase()
-                  .replace(/^.+u\s|\s\*/g,'');
-          console.log(`Preencheu campo ${fieldName}`);
-
-          if(++filledFields >= contactFormGroup.length) console.log('Preencheu todo o formulário');
-
-          input.parentElement.removeEventListener('change', verifyForm);
         };
       };
-      
-      const contactFormGroup = document.querySelectorAll('#contactForm .form-group');
-      let filledFields = 0;
-      contactFormGroup.forEach( f => { f.addEventListener('change', verifyForm) });
+      document.querySelector('#contactForm').addEventListener('change', verifyForm);
 
-    };
 
     // 6. Executar console.log('Clicou no menu <NOME DO MENU>') quando o usuário clicar em cada uma das opções do menu superior (SERVIÇOS, ..., CONTATO).
       document.querySelectorAll("nav#mainNav .nav .page-scroll").forEach(n => 
