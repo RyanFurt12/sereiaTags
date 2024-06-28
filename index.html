@@ -2370,7 +2370,7 @@
         {
           console.log('Rolou até o final');
           this.scrollEndBlocked = true;
-          setTimeout(() => { this.scrollEndBlocked = false }, 5000)
+          setTimeout(() => { this.scrollEndBlocked = false }, 5000);
         };
       });
       
@@ -2398,8 +2398,8 @@
         {
           console.log(`Preencheu campo "${e.target.id}"`);
 
-          let inputsLength = this.querySelectorAll(".form-group input,textarea").length
-          this.filledFields = this.filledFields? ++this.filledFields : 1
+          let inputsLength = this.querySelectorAll(".form-group input,textarea").length;
+          this.filledFields = this.filledFields? ++this.filledFields : 1;
           if(this.filledFields >= inputsLength)
           {
             console.log('Preencheu todo o formulário');
@@ -2420,7 +2420,7 @@
     // 7. Executar console.log('Visualizou o banheiro') sempre que a imagem banheiro.webp (seção "SOBRE") ficar visível no viewport.
       const observerImage = new IntersectionObserver(entries => 
       {
-        if(entries[0].isIntersecting) console.log('Visualizou o banheiro') ;   
+        if(entries[0].isIntersecting) console.log('Visualizou o banheiro');   
       }, 
       { threshold: 1 }
       );
