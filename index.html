@@ -2366,9 +2366,14 @@
       {
         let documentHeight = document.body.offsetHeight;
         let scrollPosBottom = window.innerHeight + window.scrollY;
-
-        if(scrollPosBottom == documentHeight) console.log('Rolou até o final');
+        if(!this.scrollEndBlocked & scrollPosBottom == documentHeight)
+        {
+          console.log('Rolou até o final');
+          this.scrollEndBlocked = true;
+          setTimeout(() => { this.scrollEndBlocked = false }, 5000)
+        };
       });
+      
 
     //2. Executar console.log('Clicou em FAÇA UM ORÇAMENTO') se o usuário clicou no botão FAÇA UM ORÇAMENTO.
       document.querySelector('header .intro-text a')?.addEventListener('click', e => 
