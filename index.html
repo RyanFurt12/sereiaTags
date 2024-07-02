@@ -2399,7 +2399,8 @@
           console.log(`Preencheu campo "${e.target.id}"`);
 
           let inputsLength = this.querySelectorAll(".form-group input,textarea").length;
-          this.filledFields = this.filledFields? ++this.filledFields : 1;
+          this.filledFields = ++this.filledFields || 1;
+          console.log(this.filledFields);
           if(this.filledFields >= inputsLength)
           {
             console.log('Preencheu todo o formulário');
