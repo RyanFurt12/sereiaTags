@@ -2394,13 +2394,18 @@
     //5. Executar console.log('Preencheu todo o formulário') quando o usuário terminou de preencher todo o formulário.
       function verifyForm(e)
       {
-        if(e.target.value != "" & e.target.getAttribute('aria-invalid') == 'false')
+        if(
+          e.target.value != "" &
+          e.target.getAttribute('aria-invalid') == 'false' &
+          !e.target.isOk
+        )
         {
           console.log(`Preencheu campo "${e.target.id}"`);
+          e.target.isOk = true
 
           let inputsLength = this.querySelectorAll(".form-group input,textarea").length;
           this.filledFields = ++this.filledFields || 1;
-          console.log(this.filledFields);
+
           if(this.filledFields >= inputsLength)
           {
             console.log('Preencheu todo o formulário');
