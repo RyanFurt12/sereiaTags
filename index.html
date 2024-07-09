@@ -2232,7 +2232,6 @@
       };
     })(jQuery);
     $(function () {
-      let shouldFail = false;
       $('#contactForm input,#contactForm textarea').jqBootstrapValidation({
         preventSubmit: true,
         submitError: function ($form, event, errors) {
@@ -2252,9 +2251,7 @@
             firstName = name.split(' ').slice(0, -1).join(' ');
           }
           $.ajax({
-            url: (shouldFail = !shouldFail) // alterna entre falha e sucesso da submissão do contato
-              ? 'https://run.mocky.io/v3/9f2a669c-e0d8-463c-bcb1-ada3004d94e6' // sucesso na submissão
-              : 'https://run.mocky.io/v3/723e9027-4fe2-4697-8198-902e2123d854', // falha na submissão
+            url: 'https://sitesereiaform-am194oys8fmr.runkit.sh/', // notebook em https://runkit.com/lcrespilho/sitesereiaform
             type: 'POST',
             data: {
               name,
