@@ -2366,15 +2366,6 @@
   <!-- Exercise Answers -->
   <script>
 
-    // ✅ Quantos usuários rolaram a página até o final?
-    // ✅ Quantos usuários visualizaram o formulário de contato?
-    // ✅ Quantos usuários começaram a preencher o formulário de contato e por qual input do formulário?
-    // ✅ Quantos usuários enviaram o formulário de contato? Foi com sucesso ou falha?
-    // ✅ Quantas pessoas interagiram com o menu superior?
-    // ✅ Quantas pessoas clicaram nos links de mídias sociais? E qual foi a mídia? Foi do próprio site ou a de um dev?
-    // ✅ Quantos usuários ficaram pelo menos 1 minuto no seu site?
-    // ✅ O pop-up com o telefone apareceu na página?
-
     // Quantos usuários ficaram pelo menos 1 minuto no seu site?
       setTimeout( () => { gtag('event','60_sec_in_page') }, 60 * 1000 );
 
@@ -2420,6 +2411,7 @@
 
     //4. Executar console.log('Preencheu campo <NOME DO CAMPO>') quando o usuário preencher cada campo do formulário. Por exemplo, se preencher o campo de email, executar console.log('Preencheu campo email'). Nesse caso específico do email, só executar o comando se o email for considerado válido pela validação automática do campo/página.
     //5. Executar console.log('Preencheu todo o formulário') quando o usuário terminou de preencher todo o formulário.
+    // Quantos usuários começaram a preencher o formulário de contato e por qual input do formulário?
       document.querySelector('#contactForm')?.addEventListener('change', (e) => {
         if(
           !e.target.isOk &&
@@ -2435,7 +2427,6 @@
           if(form.filledFields == 1) {
             gtag('event', 'start_contact_form', {
               'form_field': e.target.id,
-              'form_lenght': inputsLength
             });
           }; 
           
@@ -2464,7 +2455,7 @@
           });
           
           form.formViewBlocked = true;
-          setTimeout(() => { form.formViewBlocked = false }, 15000);
+          setTimeout(() => { form.formViewBlocked = false }, 10000);
         };
       }, 
       { threshold: .5 }
@@ -2515,22 +2506,20 @@
 
 
     // Quantas pessoas clicaram nos links de mídias sociais? E qual foi a mídia? Foi do próprio site ou a de um dev?
-
       document.querySelectorAll('ul.social-buttons')
         .forEach(t => t.addEventListener('click', (e) => {
           let targetTag = e.target.tagName.toUpperCase();
           if('I' == targetTag || 'A' == targetTag ) {
             let icon = targetTag == 'I'? e.target : e.target.firstElementChild;
             let card = e.currentTarget.parentElement;
-
             let params = {
               'social_network': icon.getAttribute('class').replace(/.+-/g,''),
-              'link_context': (card.childNodes.length > 5? 'dev' : 'site'),
+              'link_context': card.getAttribute('class').includes('member')? 'dev' : 'site',
             };
             if( params.link_context == 'dev' ) {
               params.dev_name = card.querySelector('h4').innerText;
             };
-
+            
             gtag( 'event', 'social_buttons_click', params );
           }
         })
