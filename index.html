@@ -911,7 +911,7 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments)};
     gtag('js', new Date());
-    gtag('config', 'G-167XJ8C684');
+    gtag('config', 'G-167XJ8C684', { 'debug_mode':true });
   </script>
 </head>
 
@@ -2369,7 +2369,7 @@
     // ✅ Quantos usuários rolaram a página até o final?
     // ✅ Quantos usuários visualizaram o formulário de contato?
     // ✅ Quantos usuários começaram a preencher o formulário de contato e por qual input do formulário?
-    // ⛔️ Quantos usuários enviaram o formulário de contato? Foi com sucesso ou falha?
+    // ✅ Quantos usuários enviaram o formulário de contato? Foi com sucesso ou falha?
     // ✅ Quantas pessoas interagiram com o menu superior?
     // ✅ Quantas pessoas clicaram nos links de mídias sociais? E qual foi a mídia? Foi do próprio site ou a de um dev?
     // ✅ Quantos usuários ficaram pelo menos 1 minuto no seu site?
@@ -2461,13 +2461,13 @@
       {
         let form = document.querySelector("#contactForm");
         form.viewFrom = from;
-        setTimeout(()=>{form.viewFrom = 'scroll'}, 1000);
+        setTimeout(() => { form.viewFrom = 'scroll' }, 1000);
       };
 
       new IntersectionObserver(entries => 
       {
         let form = entries[0].target
-        if(entries[0].isIntersecting)
+        if(!form.formViewBlocked && entries[0].isIntersecting)
         {
           form.isFirstView = form.isFirstView == undefined;
           gtag('event', 'contact_form_view',
@@ -2475,30 +2475,34 @@
             'is_first_view': form.isFirstView,
             'view_from': form.viewFrom || 'scroll'
           });
+          
+          form.formViewBlocked = true;
+          setTimeout(() => { form.formViewBlocked = false }, 15000);
         }   
       }, 
       { threshold: .5 }
       ).observe(document.querySelector("#contactForm"));
 
 
-    // ⛔️ Quantos usuários enviaram o formulário de contato? Foi com sucesso ou falha?
-      new PerformanceObserver( entries => 
-        {
-          let entry = entries.getEntries()[0];
-          if(
-            entry.initiatorType.toLowerCase() == 'xmlhttprequest' &&
-            entry.name.includes('sitesereiaform')
-          ){
-            let resp = entry.responseStatus;
-            gtag('event', 'form_submitted',
-              {
-                'response_type': (''+resp).startsWith(2)? 'Success' : 'Error',
-                'response_status': resp
+    // Quantos usuários enviaram o formulário de contato? Foi com sucesso ou falha?
+      new PerformanceObserver( entries => {
+          entries.getEntries().find( entry => {
+
+              let isFormResponse = 
+                    entry.initiatorType.toLowerCase() == 'xmlhttprequest' &&
+                    entry.name.includes('sitesereiaform');
+
+              if(isFormResponse) {
+                let resp = entry.responseStatus;
+                gtag('event', 'form_submitted', {
+                    'response_type': (''+resp).startsWith(2)? 'Success' : 'Error',
+                    'response_status': resp
+                });
               }
-            );
-          }
-        }
-      ).observe( { type: 'resource' } );
+
+              return isFormResponse;
+          });
+      }).observe( { type: 'resource' } );
 
 
     // 6. Executar console.log('Clicou no menu <NOME DO MENU>') quando o usuário clicar em cada uma das opções do menu superior (SERVIÇOS, ..., CONTATO).
