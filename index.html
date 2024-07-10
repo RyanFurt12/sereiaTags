@@ -905,6 +905,14 @@
       transition: all ease-in-out 1s;
     }
   </style>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-167XJ8C684"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments)};
+    gtag('js', new Date());
+    gtag('config', 'G-167XJ8C684', { 'debug_mode':true });
+  </script>
 </head>
 
 <body id="page-top" class="index">
@@ -2358,16 +2366,37 @@
   <!-- Exercise Answers -->
   <script>
 
-    //01 - Console log ao final da página
+    // ✅ Quantos usuários rolaram a página até o final?
+    // ✅ Quantos usuários visualizaram o formulário de contato?
+    // ✅ Quantos usuários começaram a preencher o formulário de contato e por qual input do formulário?
+    // ⛔️ Quantos usuários enviaram o formulário de contato? Foi com sucesso ou falha?
+    // ✅ Quantas pessoas interagiram com o menu superior?
+    // ✅ Quantas pessoas clicaram nos links de mídias sociais? E qual foi a mídia? Foi do próprio site ou a de um dev?
+    // ✅ Quantos usuários ficaram pelo menos 1 minuto no seu site?
+    // ✅ O pop-up com o telefone apareceu na página?
+
+    // Quantos usuários ficaram pelo menos 1 minuto no seu site?
+      setTimeout( () => { gtag('event','60_sec_in_page') }, 60 * 1000 );
+
+    //1. Console log ao final da página
+    // Quantos usuários rolaram a página até o final?
       window.addEventListener('scroll', () => 
       {
-        let documentHeight = document.body.offsetHeight;
-        let scrollPosBottom = window.innerHeight + window.scrollY;
-        if(!this.scrollEndBlocked & scrollPosBottom == documentHeight)
+        let body = document.body
+        let documentHeight = Math.floor(body.offsetHeight);
+        let scrollPosBottom = Math.ceil(window.innerHeight + window.scrollY);
+
+        if(!body.scrollEndBlocked && scrollPosBottom >= documentHeight)
         {
           console.log('Rolou até o final');
-          this.scrollEndBlocked = true;
-          setTimeout(() => { this.scrollEndBlocked = false }, 5000);
+          body.isFirstScroll = body.isFirstScroll == undefined
+          gtag('event', 'scroll_end', 
+          { 
+            'isFirstScroll': body.isFirstScroll
+          });
+
+          body.scrollEndBlocked = true;
+          setTimeout(() => { body.scrollEndBlocked = false }, 15000);
         };
       });
       
@@ -2376,58 +2405,154 @@
       document.querySelector('header .intro-text a')?.addEventListener('click', e => 
       {
         console.log(`Clicou em ${e.target.innerText}`);
+        document.body.formViewAttribuition('header_button');
       });
 
+
     //3. Executar console.log('Visualizou FALE COM UM ATENDENTE') quando o pop-up "Fale com um atendente" com o telefone ficar visível.
-      const observerTel = new IntersectionObserver( entries => 
+    // O pop-up com o telefone apareceu na página?
+      new IntersectionObserver( entries => 
       {
-        if(entries[0].isIntersecting) console.log('Visualizou FALE COM UM ATENDENTE');   
+        if(entries[0].isIntersecting) 
+        {
+          console.log('Visualizou FALE COM UM ATENDENTE');
+          gtag('event', 'contact_attendant_view');
+        };   
       },
       { threshold: .8 }
-      );
-      observerTel.observe(document.querySelector('#call-me-baby'));
+      ).observe(document.querySelector('#call-me-baby'));
+
 
     //4. Executar console.log('Preencheu campo <NOME DO CAMPO>') quando o usuário preencher cada campo do formulário. Por exemplo, se preencher o campo de email, executar console.log('Preencheu campo email'). Nesse caso específico do email, só executar o comando se o email for considerado válido pela validação automática do campo/página.
     //5. Executar console.log('Preencheu todo o formulário') quando o usuário terminou de preencher todo o formulário.
-      function verifyForm(e)
+      document.querySelector('#contactForm')?.addEventListener('change', (e)=>
       {
         if(
-          e.target.value != "" &
-          e.target.getAttribute('aria-invalid') == 'false' &
-          !e.target.isOk
+          !e.target.isOk &&
+          e.target.value != "" &&
+          e.target.getAttribute('aria-invalid') == 'false'
         )
         {
+          let form = e.currentTarget;
+          e.target.isOk = true;
+          let inputsLength = form.querySelectorAll(".form-group input,textarea").length;
+          form.filledFields = ++form.filledFields || 1;
+          
           console.log(`Preencheu campo "${e.target.id}"`);
-          e.target.isOk = true
-
-          let inputsLength = this.querySelectorAll(".form-group input,textarea").length;
-          this.filledFields = ++this.filledFields || 1;
-
-          if(this.filledFields >= inputsLength)
+          if(form.filledFields == 1)
+          {
+            gtag('event', 'start_contact_form',
+            {
+              'form_field': e.target.id,
+              'form_lenght': inputsLength
+            });
+          } 
+          
+          if(form.filledFields >= inputsLength)
           {
             console.log('Preencheu todo o formulário');
-            this.removeEventListener('change', verifyForm);
           };
         };
+      });
+            
+
+    // Quantos usuários visualizaram o formulário de contato?
+    document.body.formViewAttribuition = from =>
+      {
+        let form = document.querySelector("#contactForm");
+        form.viewFrom = from;
+        setTimeout(()=>{form.viewFrom = 'scroll'}, 1000);
       };
-      document.querySelector('#contactForm')?.addEventListener('change', verifyForm);
+
+      new IntersectionObserver(entries => 
+      {
+        let form = entries[0].target
+        if(entries[0].isIntersecting)
+        {
+          form.isFirstView = form.isFirstView == undefined;
+          gtag('event', 'contact_form_view',
+          {
+            'is_first_view': form.isFirstView,
+            'view_from': form.viewFrom || 'scroll'
+          });
+        }   
+      }, 
+      { threshold: .5 }
+      ).observe(document.querySelector("#contactForm"));
+
+
+    // ⛔️ Quantos usuários enviaram o formulário de contato? Foi com sucesso ou falha?
+      new PerformanceObserver( entries => 
+        {
+          let entry = entries.getEntries()[0];
+          if(
+            entry.initiatorType.toLowerCase() == 'xmlhttprequest' &&
+            entry.name.includes('run.mocky')
+          ){
+            let resp = entry.responseStatus;
+            gtag('event', 'form_submitted',
+              {
+                'response_type': (''+resp).startsWith(2)? 'Success' : 'Error',
+                'response_status': resp
+              }
+            )
+          }
+        }
+      ).observe( { type: 'resource' } );
 
 
     // 6. Executar console.log('Clicou no menu <NOME DO MENU>') quando o usuário clicar em cada uma das opções do menu superior (SERVIÇOS, ..., CONTATO).
+    // Quantas pessoas interagiram com o menu superior?
       document.querySelector("nav#mainNav .navbar-right")?.addEventListener('click', (e) => 
       {
-        if(e.target.tagName.toLowerCase() == 'a') console.log(`Clicou no menu ${e.target.innerText}`);
+        if(e.target.tagName.toLowerCase() == 'a')
+        {
+          console.log(`Clicou no menu ${e.target.innerText}`);
+          gtag('event', 'nav_menu_click',
+          {
+            'clicked_menu': e.target.innerText.toLowerCase()
+          });
+
+          if(e.target.innerText == 'CONTATO') document.body.formViewAttribuition('nav_button');
+        };
       });
   
 
     // 7. Executar console.log('Visualizou o banheiro') sempre que a imagem banheiro.webp (seção "SOBRE") ficar visível no viewport.
-      const observerImage = new IntersectionObserver(entries => 
+      new IntersectionObserver(entries => 
       {
         if(entries[0].isIntersecting) console.log('Visualizou o banheiro');   
       }, 
       { threshold: 1 }
+      ).observe(document.querySelector("#about img[src='images/banheiro.webp']"));
+
+
+
+    // Quantas pessoas clicaram nos links de mídias sociais? E qual foi a mídia? Foi do próprio site ou a de um dev?
+
+      document.querySelectorAll('ul.social-buttons')
+        .forEach(t => t.addEventListener('click', (e) => 
+        {
+          let targetTag = e.target.tagName.toUpperCase();
+          if('I' == targetTag || 'A' == targetTag )
+          {
+            let icon = targetTag == 'I'? e.target : e.target.firstElementChild;
+            let card = e.currentTarget.parentElement;
+
+            let params = 
+            {
+              'social_network': icon.getAttribute('class').replace(/.+-/g,''),
+              'link_context': (card.childNodes.length > 5? 'dev' : 'site'),
+            };
+            if( params.link_context == 'dev' )
+            {
+              params.dev_name = card.querySelector('h4').innerText;
+            };
+
+            gtag( 'event', 'social_buttons_click', params );
+          }
+        })
       );
-      observerImage.observe(document.querySelector("#about img[src='images/banheiro.webp']"));
 
   </script>
 
