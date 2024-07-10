@@ -2487,7 +2487,7 @@
           let entry = entries.getEntries()[0];
           if(
             entry.initiatorType.toLowerCase() == 'xmlhttprequest' &&
-            entry.name.includes('run.mocky')
+            entry.name.includes('sitesereiaform')
           ){
             let resp = entry.responseStatus;
             gtag('event', 'form_submitted',
@@ -2495,7 +2495,7 @@
                 'response_type': (''+resp).startsWith(2)? 'Success' : 'Error',
                 'response_status': resp
               }
-            )
+            );
           }
         }
       ).observe( { type: 'resource' } );
